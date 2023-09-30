@@ -5,6 +5,16 @@
 #include <iostream>
 #include "Examen.h"
 
+void mostrarEjercicios(Examen * examen) {
+	for (int i = 1; i <= examen->cantidadEjercicios(); i++) {
+		std::cout << "El ejercicio "
+				  << examen->getEjercicio(i)->getNumero()
+				  << " tiene nota: "
+				  << examen->getEjercicio(i)->getPuntaje()
+				  << std::endl;
+	}
+}
+
 int main () {
 	Examen * miExamen = new Examen(3);
 	miExamen->getEjercicio(1)->setPuntaje(3);
@@ -20,13 +30,11 @@ int main () {
 	// puntaje promedio
 	std::cout << "El puntaje promedio es: " << miExamen->getPuntajePromedio() << std::endl;
 	// numeros de ejercicios
-	for (int i = 1; i <= miExamen->cantidadEjercicios(); i++) {
-		std::cout << "El ejercicio "
-				  << miExamen->getEjercicio(i)->getNumero()
-				  << " tiene nota: "
-				  << miExamen->getEjercicio(i)->getPuntaje()
-				  << std::endl;
-	}
+	mostrarEjercicios(miExamen);
+	miExamen->ordenarEjercicios();
+	std::cout << "Ejercicios ordenados" << std::endl;
+	mostrarEjercicios(miExamen);
+
 
 	delete miExamen;
     return 0;
