@@ -32,8 +32,15 @@ public:
 	 */
 	~Televisor();
 
+    /*
+     * Pos: Devuelve el canal actual
+     */
+    Canal * getCanalActual();
+
+    unsigned int getVolumenActual();
+
 	/*
-	 * Pre: El canala esta entre PRIMER_CANAL y ULTIMO_CANAL
+	 * Pre: El canal esta entre PRIMER_CANAL y ULTIMO_CANAL
 	 * Pos: Cambia el canal hacia el indicado
 	 * 		y actualiza el volumen del canal
 	 */

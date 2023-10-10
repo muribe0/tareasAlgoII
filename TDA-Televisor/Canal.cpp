@@ -12,7 +12,7 @@ void Canal::validarNumero(unsigned int numero) {
 }
 
 void Canal::validarVolumen(unsigned int volumen) {
-	if (volumen < 1 || volumen > 100) {
+	if (volumen < 0 || volumen > 100) {
 		throw std::invalid_argument("El volumen debe estar entre 1 y 100");
 	}
 }

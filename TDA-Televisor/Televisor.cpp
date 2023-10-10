@@ -22,6 +22,14 @@ Televisor::~Televisor() {
 	delete this->canales;
 }
 
+Canal * Televisor::getCanalActual() {
+    return this->canales->getDato(this->canalActual - 1);
+}
+
+unsigned int Televisor::getVolumenActual() {
+    return this->volumenActual;
+}
+
 void Televisor::cambiarCanal(unsigned int canal) {
 	if (canal < PRIMER_CANAL || canal > ULTIMO_CANAL) {
 		throw std::invalid_argument("El canal debe estar entre 1 y 140");
@@ -86,11 +94,13 @@ Canal * Televisor::getCanalConMaximoVolumen() {
 	Canal * canalConMaximoVolumen;
 	unsigned int volumenMaximo = 0;
 	for (int i = 0; i < ULTIMO_CANAL; i++) {
-		if (volumenMaximo < this->canales->getDato(i)->getVolumenMaximo()) {
-			volumenMaximo = this->canales->getDato(i)->getVolumenMaximo();
-			canalConMaximoVolumen = this->canales->getDato(i);
+        Canal * canalAux = this->canales->getDato(i);
+		if (volumenMaximo < canalAux->getVolumenMaximo()) {
+			volumenMaximo = canalAux->getVolumenMaximo();
+			canalConMaximoVolumen = canalAux;
 		}
 	}
+    return canalConMaximoVolumen;
 }
 
 
