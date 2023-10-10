@@ -45,7 +45,9 @@ void ListaEnteros::altaFinal(int dato) {
 }
 
 void ListaEnteros::altaPosicion(int posicion, int dato) {
-	validarPosicion(posicion);
+	if (posicion < 1 || posicion > this->tamanio + 1) {
+		throw "Indice fuera de rango";
+	}
 
 	if (posicion == 1) {
 		altaPrincipio(dato);
