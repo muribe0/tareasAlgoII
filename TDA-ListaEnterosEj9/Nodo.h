@@ -5,6 +5,8 @@
 #ifndef TAREASALGOII_NODO_H
 #define TAREASALGOII_NODO_H
 
+#include <iostream>
+
 template <class T>
 class Nodo {
 private:
@@ -12,7 +14,7 @@ private:
 	Nodo<T> *siguiente;
 public:
 	Nodo(T dato) {
-		siguiente = nullptr;
+		siguiente = NULL;
 		this->dato = dato;
 	}
 

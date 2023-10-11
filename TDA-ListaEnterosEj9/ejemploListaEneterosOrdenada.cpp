@@ -18,6 +18,10 @@ int main () {
 	lista->borrarElemento(2);
 	std::cout<< std::endl;
 	lista->listar();
+	std::cout<< std::endl;
+
+
+
 	delete lista;
 
 }

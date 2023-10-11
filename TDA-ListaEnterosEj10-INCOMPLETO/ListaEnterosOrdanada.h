@@ -20,13 +20,25 @@
  * - Listar (muestra todos los elementos de la lista) ✓
  * - Listar en forma inversa (muestra desde el último hasta el final) ✓
  * */
-#ifndef TAREASALGOII_LISTAENTEROSE7_H
-#define TAREASALGOII_LISTAENTEROSE7_H
+#ifndef TAREASALGOII_LISTAENTEROSE9_H
+#define TAREASALGOII_LISTAENTEROSE9_H
 
 /*
- * 7) Diseñar e implementar una nueva ListaEnteros donde el alta será únicamente en
-	  orden, por lo que no se indicará la posición. Tener en cuenta que puede haber
-	  elementos repetidos.
+ * 9) Diseñar e implementar una nueva ListaEnteros donde el alta será únicamente en
+	  orden, por lo que no se indicará la posición.
+	  Tener en cuenta que NO puede haber elementos repetidos.
+	10) Utilizando la lista del punto anterior, agregarle los métodos:
+		- Recibe una lista por parámetro e indica si ésta está incluida o no (devuelve
+		true o false).
+		- Igual que el anterior pero si la lista pasada por parámetro incluye a la lista
+		que llama.
+		- Recibe una lista por parámetro y devuelve una tercera lista que es la
+		intersección de ambas.
+		- Igual que el anterior pero devuelve la unión.
+		- Igual que el anterior pero devuelve la resta (elementos que no están en la
+		lista del parámetro).
+		- Retorne la propia lista pero invertida.
+		- Recibe una lista e indica si es igual a la propia (mismos elementos).
  */
 
 #include "Nodo.h"
@@ -88,10 +100,21 @@ public:
 	 * Pos: Agrega un elemento al final de la lista
 	 */
 	void alta(T dato) {
-		Nodo <T> * nuevo = new Nodo<T>(dato);
-		nuevo->setSiguiente(this->ultimo);
-		this->ultimo = nuevo;
-		this->longitud++;
+		if (!this->ultimo) {
+			Nodo <T> * nuevo = new Nodo<T>(dato);
+			nuevo->setSiguiente(this->ultimo);
+			this->ultimo = nuevo;
+			this->longitud++;
+		} else {
+			if (this->ultimo->getDato() != dato) {
+				Nodo <T> * nuevo = new Nodo<T>(dato);
+				nuevo->setSiguiente(this->ultimo);
+				this->ultimo = nuevo;
+				this->longitud++;
+			} else {
+				throw "El elemento ya existe";
+			}
+		}
 	}
 
 	/*
@@ -162,38 +185,7 @@ public:
 	 * Pos: Borra todas las ocurrencias del elemento
 	 */
 	void borrarElemento(T dato) {
-		Nodo <T> * anterior = NULL;
-		Nodo <T> * actual = this->ultimo;
-		bool borrado = false;
-
-		while (actual) {
-			if (actual->getDato() == dato) {
-				if (anterior) {
-					anterior->setSiguiente(actual->getSiguiente());
-					delete actual;
-					actual = anterior->getSiguiente();
-				} else {
-					this->ultimo = actual->getSiguiente();
-					delete actual;
-					actual = this->ultimo;
-				}
-				this->longitud--;
-				borrado = true;
-			} else {
-				if (borrado) {
-					// Si se borraron todos los elementos iguales, y se llego
-					// a uno distinto, se termina el ciclo.
-					// Esto aprovecha la propiedad de que deben estar ordenados por lo
-					// que si se llega a uno distinto, no hay mas iguales que borrar.
-					actual = NULL;
-				}
-				anterior = actual;
-				actual = actual->getSiguiente();
-			}
-		}
-		if (!borrado) {
-			throw "No se encontro el elemento a borrar";
-		}
+		borrarPrimeraAparicion(dato);
 	}
 
 	/*
@@ -253,6 +245,14 @@ public:
 			std::cout << actual->getDato() << " ";
 			actual = actual->getSiguiente();
 		}
+	}
+
+
+	/*
+	 * TODO: Funcion de prueba innecesaria
+	 */
+	void mostrar(ListaEnterosOrdanada<T> * lista) {
+		std::cout << lista->ultimo->getDato();
 	}
 };
 

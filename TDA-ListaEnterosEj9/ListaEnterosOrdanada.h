@@ -20,13 +20,13 @@
  * - Listar (muestra todos los elementos de la lista) ✓
  * - Listar en forma inversa (muestra desde el último hasta el final) ✓
  * */
-#ifndef TAREASALGOII_LISTAENTEROSE7_H
-#define TAREASALGOII_LISTAENTEROSE7_H
+#ifndef TAREASALGOII_LISTAENTEROSE9_H
+#define TAREASALGOII_LISTAENTEROSE9_H
 
 /*
- * 7) Diseñar e implementar una nueva ListaEnteros donde el alta será únicamente en
-	  orden, por lo que no se indicará la posición. Tener en cuenta que puede haber
-	  elementos repetidos.
+ * 9) Diseñar e implementar una nueva ListaEnteros donde el alta será únicamente en
+	  orden, por lo que no se indicará la posición.
+	  Tener en cuenta que NO puede haber elementos repetidos.
  */
 
 #include "Nodo.h"
@@ -59,6 +59,23 @@ private:
 			std::cout << actual->getDato() << " ";
 		}
 	}
+
+	/*
+	 * Dados dos nodos, recorre ambas listas y forma la interseccion en orden inverso
+	 */
+	void recorrerAmbas(Nodo<T> * actual, Nodo<T> * actualOtra, ListaEnterosOrdanada<T> * interseccion) {
+		if (actual->getSiguiente() && actualOtra->getSiguiente()) { // si ambos tienen siguiente
+			recorrerAmbas(actual->getSiguiente(), actualOtra->getSiguiente());
+		} else if (actual->getSiguiente()) { // si solo actual tiene siguiente
+			recorrerAmbas(actual->getSiguiente(), actualOtra);
+		} else if (actualOtra->getSiguiente()) { // si solo actualOtra tiene siguiente
+			recorrerAmbas(actual, actualOtra->getSiguiente());
+		}
+		if (actual->getDato() == actualOtra->getDato()) {
+			interseccion->alta(actual->getDato());
+		} // TODO: LE FALTA MUCHO PARA LOGRAR BAJARLO DE n^2. Pero es facil hacerlo n^2
+		// Tampoco esta completo realmente
+	}
 public:
 
 	/*
@@ -84,14 +101,25 @@ public:
 
 	/*
 	 * Pre: Los elementos de la lista deben poder ser ordenados.
-	 * 		El elemento debe ser igual o mayor al ultimo elemento de la lista.
+	 * 		El elemento debe ser mayor al ultimo elemento de la lista.
 	 * Pos: Agrega un elemento al final de la lista
 	 */
 	void alta(T dato) {
-		Nodo <T> * nuevo = new Nodo<T>(dato);
-		nuevo->setSiguiente(this->ultimo);
-		this->ultimo = nuevo;
-		this->longitud++;
+		if (!this->ultimo) {
+			Nodo <T> * nuevo = new Nodo<T>(dato);
+			nuevo->setSiguiente(this->ultimo);
+			this->ultimo = nuevo;
+			this->longitud++;
+		} else {
+			if (this->ultimo->getDato() != dato) {
+				Nodo <T> * nuevo = new Nodo<T>(dato);
+				nuevo->setSiguiente(this->ultimo);
+				this->ultimo = nuevo;
+				this->longitud++;
+			} else {
+				throw "El elemento ya existe";
+			}
+		}
 	}
 
 	/*
@@ -162,38 +190,7 @@ public:
 	 * Pos: Borra todas las ocurrencias del elemento
 	 */
 	void borrarElemento(T dato) {
-		Nodo <T> * anterior = NULL;
-		Nodo <T> * actual = this->ultimo;
-		bool borrado = false;
-
-		while (actual) {
-			if (actual->getDato() == dato) {
-				if (anterior) {
-					anterior->setSiguiente(actual->getSiguiente());
-					delete actual;
-					actual = anterior->getSiguiente();
-				} else {
-					this->ultimo = actual->getSiguiente();
-					delete actual;
-					actual = this->ultimo;
-				}
-				this->longitud--;
-				borrado = true;
-			} else {
-				if (borrado) {
-					// Si se borraron todos los elementos iguales, y se llego
-					// a uno distinto, se termina el ciclo.
-					// Esto aprovecha la propiedad de que deben estar ordenados por lo
-					// que si se llega a uno distinto, no hay mas iguales que borrar.
-					actual = NULL;
-				}
-				anterior = actual;
-				actual = actual->getSiguiente();
-			}
-		}
-		if (!borrado) {
-			throw "No se encontro el elemento a borrar";
-		}
+		borrarPrimeraAparicion(dato);
 	}
 
 	/*
@@ -254,6 +251,82 @@ public:
 			actual = actual->getSiguiente();
 		}
 	}
+
+	/*
+	 * Pre: La lista pasada por parametro esta ordenada y no tiene elementos repetidos
+	 * Pos: Devuelve verdadero si la lista recibida por parametro esta incluida en la lista
+	 */
+	bool incluyeA(ListaEnterosOrdanada<T> * otraLista) {
+		if (otraLista->longitud > this->longitud) {
+			return false;
+		}
+
+		bool estaIncluida = false;
+		Nodo<T> * actualOtra = otraLista->ultimo;
+		Nodo<T> * actual = this->ultimo;
+
+		while (actual && actualOtra) {
+			if (actualOtra->getDato() == actual->getDato()) {
+				estaIncluida = true;
+				actualOtra = actualOtra->getSiguiente();
+			} else if (estaIncluida) {
+				return false; // se vale de que las listas estan ordenadas y no hay repetidos
+			}
+			actual = actual->getSiguiente();
+		}
+
+		if (!estaIncluida) {
+			return false;
+		} else if (!actualOtra) {
+			return true;
+		} else if (!actual) {
+			return false;
+		}
+	}
+
+	/*
+	 * Pre: La lista pasada por parametro esta ordenada y no tiene elementos repetidos
+	 * Pos: Devuelve verdadero si la lista esta incluida en la lista recibida por parametro
+	 */
+	bool estaIncluidaEn(ListaEnterosOrdanada<T> * otraLista) {
+		if (this->longitud > otraLista->longitud) {
+			return false;
+		}
+
+		bool estaIncluida = false;
+		Nodo<T> * actual = otraLista->ultimo;
+		Nodo<T> * actualOtra = this->ultimo;
+
+		while (actual && actualOtra) {
+			if (actualOtra->getDato() == actual->getDato()) {
+				estaIncluida = true;
+				actualOtra = actualOtra->getSiguiente();
+			} else if (estaIncluida) {
+				return false; // se vale de que las listas estan ordenadas y no hay repetidos
+			}
+			actual = actual->getSiguiente();
+		}
+
+		if (!estaIncluida) {
+			return false;
+		} else if (!actualOtra) {
+			return true;
+		} else if (!actual) {
+			return false;
+		}
+	}
+
+	/*
+	 * Pre: La lista pasada por parametro esta ordenada y no tiene elementos repetidos
+	 * Pos: Devuelve una lista interseccion de ambas
+	 */
+	ListaEnterosOrdanada<T> * interseccion(ListaEnterosOrdanada<T> * otraLista) {
+		ListaEnterosOrdanada<T> * interseccion = new ListaEnterosOrdanada<T>();
+		Nodo<T> * actual = this->ultimo;
+		Nodo<T> * actualOtra = otraLista->ultimo;
+		recorrerAmbas(actual, actualOtra, interseccion);
+	}
+
 };
 
 #endif //TAREASALGOII_LISTAENTEROSE7_H
